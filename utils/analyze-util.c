@@ -1,7 +1,21 @@
 #include <stdio.h>
 #include "analyze.h"
 
-int main() {
+int main(int argc, char** argv) {
+    if (argc < 4)
+    {
+        fprintf(stderr, "Not enough parameters\n");
+        exit(1);
+    }
+
+    printf("Hello, from analyze!\n");
+    for (int i=0;i<argc;i++)
+    {
+        printf("param %d = %s\n", i, argv[i]);
+    }
+
+    
+    
     int a = 10;
     int b = 5;
     
