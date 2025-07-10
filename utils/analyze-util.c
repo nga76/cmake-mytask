@@ -7,7 +7,7 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Not enough parameters\n");
         exit(1);
     }
-
+    printf("long is %lu byte\n", sizeof(long));
     printf("Hello, from analyze!\n");
     for (int i=0;i<argc;i++)
     {

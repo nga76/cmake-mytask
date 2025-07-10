@@ -11,13 +11,19 @@ int subtract(int a, int b) {
 }
 
 void PrintDump(StatData *data, int size, int count){
+    
+    if (count > size) count = size;
 
+    for (int i = 0; i < count; i++)
+
+        printf("id = %08X | count =  | cost = | primary = %s | mode = %03b\n",
+             data->id, data->count, data->cost, data->primary, data->mode);
 }
 
 int StoreDump(const char *filename, const StatData *data, int size){
     FILE *file = fopen(filename, "wb");
     if (file == NULL) {
-        perror("error:");
+        perror("error: open file");
         return -1;
     }
 
@@ -32,7 +38,7 @@ int StoreDump(const char *filename, const StatData *data, int size){
     fclose(file);
     return 0;
 }
-}
+
 StatData *LoadDump(const char *filename, int *size){
 
 }

@@ -10,7 +10,7 @@ void test_add() {
 
 void test_subtract() {
     assert(subtract(5, 3) == 2);
-    assert(subtract(0, 0) == 1);
+    assert(subtract(0, 0) == 0);
     printf("Test subtract passed\n");
 }
 
