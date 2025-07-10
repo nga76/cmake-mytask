@@ -1,7 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "analyze.h"
+const StatData case_1_in_a[2] =
+{{.id = 90889, .count = 13, .cost = 3.567, .primary = 0, .mode=3 },
+{.id = 90089, .count = 1, .cost = 88.90, .primary = 1, .mode=0 }};
 
 int main(int argc, char** argv) {
+    
+    PrintDump(case_1_in_a, sizeof(case_1_in_a)/sizeof(StatData), sizeof(case_1_in_a)/sizeof(StatData));
+    
+    
     if (argc < 4)
     {
         fprintf(stderr, "Not enough parameters\n");
