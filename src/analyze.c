@@ -81,30 +81,30 @@ int comp_id(const void *a, const void *b) {
 }
 
 
-StatData *JoinDump(const StatData *data1, int size1, const StatData *data2, int size2, int *result_size ){
-    StatData** mergedPtrDump = (StatData**)malloc((size1 + size2) * sizeof(StatData*));
-    if (!mergedPtrDump) {
-        perror("Ошибка выделения памяти");
-        return NULL;
-    }
-    StatData* mergedDump = (StatData*)malloc((size1 + size2) * sizeof(StatData));
+StatData *JoinDump(const StatData *data1, size_t size1, const StatData *data2, size_t size2, size_t *result_size ){
+    StatData const **mergedPtrDump = (StatData const **)malloc((size1 + size2) * sizeof(StatData*));
+    StatData *mergedDump = (StatData*)malloc((size1 + size2) * sizeof(StatData));
     if (!mergedDump) {
         perror("Ошибка выделения памяти");
         return NULL;
     }
-    StatData *ptr = NULL;
-    StatData **mergedPtr = mergedPtrDump;
-    for(ptr = data1; ptr < data1+size1; ptr++, mergedPtr++) {
+    if (!mergedPtrDump) {
+        perror("Ошибка выделения памяти");
+        return NULL;
+    }
+
+    StatData const **mergedPtr = mergedPtrDump;
+    for(StatData const *ptr = data1; ptr < data1+size1; ptr++, mergedPtr++) {
         *mergedPtr = ptr;
     }
-    for(ptr = data2; ptr < data2+size2; ptr++, mergedPtr++) {
+    for(StatData const *ptr = data2; ptr < data2+size2; ptr++, mergedPtr++) {
         *mergedPtr = ptr;
     }
     
     qsort(mergedPtrDump, size1 + size2, sizeof(StatData*), comp_id);
     
     memcpy(mergedDump, *mergedPtrDump, sizeof(StatData));
-    ptr = mergedDump + 1;
+    StatData *ptr = mergedDump + 1;
     mergedPtr = mergedPtrDump + 1;
     while(mergedPtr < mergedPtrDump + size1 + size2 && ptr < mergedDump + size1 + size2) {
         if ( (ptr - 1)->id == (*(mergedPtr))->id ) {
@@ -112,14 +112,13 @@ StatData *JoinDump(const StatData *data1, int size1, const StatData *data2, int 
             (ptr - 1)->cost += (*(mergedPtr))->cost;
             (ptr - 1)->primary &= (*(mergedPtr))->primary;
             if ( (ptr - 1)->mode < (*(mergedPtr))->mode ) (ptr - 1)->mode = (*(mergedPtr))->mode;
-            mergedPtr++;
         } else {
             memcpy(ptr, *mergedPtr, sizeof(StatData));
             ptr++;
-            mergedPtr++;
         }
+        mergedPtr++;
     }
-    *result_size = mergedPtr - mergedDump;
+    *result_size = ptr - mergedDump;
     free(mergedPtrDump);
     return mergedDump;
 }

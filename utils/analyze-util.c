@@ -15,14 +15,17 @@ int main(int argc, char** argv) {
     size_t load_size = 0;
     
     PrintDump(case_1_in_a, sizeof(case_1_in_a)/sizeof(StatData), sizeof(case_1_in_a)/sizeof(StatData));
+    printf("\n");
+    PrintDump(case_1_in_b, sizeof(case_1_in_b)/sizeof(StatData), sizeof(case_1_in_b)/sizeof(StatData));
     StoreDump("teststor", case_1_in_a, sizeof(case_1_in_a)/sizeof(StatData));
     rdata = LoadDump("teststor", &load_size);
     SortDump(rdata, load_size);
-    PrintDump(rdata, load_size, load_size);
+    //PrintDump(rdata, load_size, load_size);
     size_t new_size = 0;
-    StatData *newDump = JoinDump(case_1_in_a, sizeof(case_1_in_a)/sizeof(StatData),
+        StatData *newDump = JoinDump(case_1_in_a, sizeof(case_1_in_a)/sizeof(StatData),
                                  case_1_in_b, sizeof(case_1_in_b)/sizeof(StatData), &new_size);
-    PrintDump(rdata, load_size, load_size);                             
+    printf("\n");
+    PrintDump(newDump, new_size, new_size);                             
     
     if (argc < 4)
     {

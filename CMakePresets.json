@@ -2,14 +2,13 @@
     "version": 8,
     "configurePresets": [
         {
-            "name": "gcc",
-            "displayName": "GCC 11.4.0 x86_64-linux-gnu",
-            "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "name": "c99",
+            "displayName": "GCC for c99 7.5.0",
+            "description": "Using compilers: C = /usr/bin/c99-gcc",
+            "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_C_COMPILER": "/usr/bin/gcc",
-                "CMAKE_CXX_COMPILER": "/usr/bin/g++",
+                "CMAKE_C_COMPILER": "/usr/bin/c99-gcc",
                 "CMAKE_BUILD_TYPE": "Debug"
             }
         }
