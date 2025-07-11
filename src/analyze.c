@@ -14,10 +14,10 @@ void PrintDump(const StatData *data, size_t size, size_t count){
     
     if (count > size) count = size;
 
-    for (size_t i = 0; i < count; i++)
-        printf("id = %08lX | count = %5d | cost = %.3e| primary = %s | mode = %c%c%c\n",
-             (data+i)->id, (data+i)->count, (data+i)->cost, (data+i)->primary == 0 ? "n" : "y",
-             (data+i)->mode & 4 ? '1': '0', (data+i)->mode & 2 ? '1': '0', (data+i)->mode & 1 ? '1': '0');
+    for (StatData *ptr = data; ptr < data+count; ptr++)
+        printf("| id = %08lX | count = %5d | cost = %.3e | primary = %s | mode = %c%c%c |\n",
+             ptr->id, ptr->count, ptr->cost, ptr->primary == 0 ? "n" : "y",
+             ptr->mode & 4 ? '1': '0', ptr->mode & 2 ? '1': '0', ptr->mode & 1 ? '1': '0');
 }
 
 int StoreDump(const char *filename, const StatData *data, size_t size){
