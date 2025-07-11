@@ -17,6 +17,6 @@ int StoreDump(const char *filename, const StatData *data, size_t size);
 StatData *LoadDump(const char *filename, size_t *size);
 
 StatData *JoinDump(const StatData *data1, int size1, const StatData *data2, int size2, int *result_size);
-StatData *SortDump(const StatData *data, size_t size);
+void SortDump(StatData *data, size_t size);
 
 #endif // ANALYZE_H
