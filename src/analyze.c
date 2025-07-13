@@ -3,12 +3,12 @@
 #include <string.h>
 #include "analyze.h"
 
-int add(int a, int b) {
-    return a + b;
-}
-
-int subtract(int a, int b) {
-    return a - b;
+char* get_filename_from_path(const char* path) {
+    const char* last_slash = strrchr(path, '/');
+    if (last_slash) {
+        return strdup(last_slash + 1);
+    }
+    return strdup(path);
 }
 
 void PrintDump(const StatData *data, size_t size, size_t count){

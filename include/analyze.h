@@ -9,9 +9,7 @@ typedef struct StatData {
     unsigned int mode:3;
 } StatData;
 
-int add(int a, int b);
-int subtract(int a, int b);
-
+char* get_filename_from_path(const char* path);
 void PrintDump(const StatData *data, size_t size, size_t count);
 int StoreDump(const char *filename, const StatData *data, size_t size);
 StatData *LoadDump(const char *filename, size_t *size);
