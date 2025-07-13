@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include "analyze.h"
 
+/* Содержимое для исходных файлов */
 const StatData case_1_in_a[2] =
 {{.id = 90889, .count = 13, .cost = 3.567, .primary = 0, .mode=3 },
 {.id = 90089, .count = 1, .cost = 88.90, .primary = 1, .mode=0 }};
@@ -13,6 +14,12 @@ const StatData case_1_in_a[2] =
 const StatData case_1_in_b[2] =
 {{.id = 90089, .count = 13, .cost = 0.011, .primary = 0, .mode=2 },
 {.id = 90189, .count = 1000, .cost = 1.00003, .primary = 1, .mode=2}};
+
+/* Ожидаемый результат обработки */
+const StatData case_1_out[3] =
+{{.id = 90189, .count = 1000, .cost = 1.00003, .primary = 1, .mode = 2 },
+{.id = 90889, .count = 13, .cost = 3.567, .primary = 0, .mode = 3 },
+{.id = 90089, .count = 14, .cost = 88.911, .primary = 0, .mode = 2 }};
 
 
 // Функция для запуска программы и получения вывода
