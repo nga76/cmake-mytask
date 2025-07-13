@@ -34,15 +34,18 @@ int StoreDump(const char *filename, const StatData *data, size_t size){
 }
 
 StatData *LoadDump(const char *filename, size_t *size){
+    char msg[1024] = {'\0'}; 
     FILE *file = fopen(filename, "rb");
     if (file == NULL) {
-        perror("Error: open file to read");
+        sprintf(msg, "Error: open file to read %s", filename);
+        perror(msg);
         return NULL;
     }
 
     // Read data size
     if (fread(size, sizeof(size_t), 1, file) != 1) {
-        perror("Error: while read size of data");
+        sprintf(msg, "Error: while read size of data from %s", filename);
+        perror(msg);
         fclose(file);
         return NULL;
     }
@@ -50,14 +53,16 @@ StatData *LoadDump(const char *filename, size_t *size){
     // Allocate memory
     StatData *data = (StatData *)malloc(*size * sizeof(StatData));
     if (data == NULL) {
-        perror("Error: memory allocate");
+        sprintf(msg, "Error: memory allocate while processing %s", filename);
+        perror(msg);
         fclose(file);
         return NULL;
     }
 
     // Read data
     if (fread(data, sizeof(StatData), *size, file) != *size) {
-        perror("Error: read data");
+        sprintf(msg, "Error: while read data from %s", filename);
+        perror(msg);
         free(data);
         fclose(file);
         return NULL;
