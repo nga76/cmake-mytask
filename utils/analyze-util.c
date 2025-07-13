@@ -3,13 +3,7 @@
 #include <string.h>
 #include <errno.h>
 #include "analyze.h"
-const StatData case_1_in_a_[2] =
-{{.id = 90889, .count = 13, .cost = 3.567, .primary = 0, .mode=3 },
-{.id = 90089, .count = 1, .cost = 88.90, .primary = 1, .mode=0 }};
 
-const StatData case_1_in_b_[2] =
-{{.id = 90089, .count = 13, .cost = 0.011, .primary = 0, .mode=2 },
-{.id = 90189, .count = 1000, .cost = 1.00003, .primary = 1, .mode=2}};
 
 int main(int argc, char** argv) {
     int err = 0;
@@ -19,9 +13,6 @@ int main(int argc, char** argv) {
     size_t size_case_1_in_a = 0;
     size_t size_case_1_in_b = 0;
     size_t size_case_1_out = 0;
-
-    
-    // StoreDump
     
     // check params
     if (argc < 4) {
@@ -32,7 +23,7 @@ int main(int argc, char** argv) {
             perror("Wrong parameters\n");
             printf("Run:\n\t%s path_in1 path_in2 path_out\n", last_slash+1);
         }
-
+        err = -1;
         goto free_res;
     }
     

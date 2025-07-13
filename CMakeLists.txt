@@ -12,11 +12,12 @@ add_library(analyze STATIC src/analyze.c)
 add_executable(analyze-util utils/analyze-util.c)
 target_link_libraries(analyze-util analyze)
 
-enable_testing()
-add_executable(tests tests/test_analyze.c)
-target_link_libraries(tests analyze)
+add_executable(test-util utils/test-util.c)
+target_link_libraries(test-util analyze)
 
-add_test(NAME TestAnalyzeLib COMMAND tests)
+enable_testing()
+
+add_test(NAME "TestAnalyzeUtil" COMMAND "test-util" "analyze-util")
 
 # install(TARGETS mylib myapp
 #     LIBRARY DESTINATION lib
