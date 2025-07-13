@@ -1,15 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "analyze.h"
-
-char* get_filename_from_path(const char* path) {
-    const char* last_slash = strrchr(path, '/');
-    if (last_slash) {
-        return strdup(last_slash + 1);
-    }
-    return strdup(path);
-}
 
 void PrintDump(const StatData *data, size_t size, size_t count){
     
@@ -24,47 +17,47 @@ void PrintDump(const StatData *data, size_t size, size_t count){
 int StoreDump(const char *filename, const StatData *data, size_t size){
     FILE *file = fopen(filename, "wb");
     if (file == NULL) {
-        perror("Ошибка при открытии файла для записи");
-        return -1;
+        perror("Error: can't open file");
+        return errno;
     }
 
-    // Записываем размер массива в начало файла
+    // write size of data
     fwrite(&size, sizeof(size_t), 1, file);
     
-    // Записываем каждую структуру в файл
+    // write data
     for (size_t i = 0; i < size; i++) {
         fwrite(&data[i], sizeof(StatData), 1, file);
     }
 
     fclose(file);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 StatData *LoadDump(const char *filename, size_t *size){
     FILE *file = fopen(filename, "rb");
     if (file == NULL) {
-        perror("Ошибка при открытии файла для чтения");
+        perror("Error: open file to read");
         return NULL;
     }
 
-    // Читаем размер массива
+    // Read data size
     if (fread(size, sizeof(size_t), 1, file) != 1) {
-        perror("Ошибка при чтении размера массива");
+        perror("Error: while read size of data");
         fclose(file);
         return NULL;
     }
 
-    // Выделяем память под массив
+    // Allocate memory
     StatData *data = (StatData *)malloc(*size * sizeof(StatData));
     if (data == NULL) {
-        perror("Ошибка при выделении памяти");
+        perror("Error: memory allocate");
         fclose(file);
         return NULL;
     }
 
-    // Читаем структуры из файла
+    // Read data
     if (fread(data, sizeof(StatData), *size, file) != *size) {
-        perror("Ошибка при чтении данных");
+        perror("Error: read data");
         free(data);
         fclose(file);
         return NULL;
@@ -85,11 +78,11 @@ StatData *JoinDump(const StatData *data1, size_t size1, const StatData *data2, s
     StatData const **mergedPtrDump = (StatData const **)malloc((size1 + size2) * sizeof(StatData*));
     StatData *mergedDump = (StatData*)malloc((size1 + size2) * sizeof(StatData));
     if (!mergedDump) {
-        perror("Ошибка выделения памяти");
+        perror("Error: memory allocate");
         return NULL;
     }
     if (!mergedPtrDump) {
-        perror("Ошибка выделения памяти");
+        perror("Error: memory allocate");
         return NULL;
     }
 
