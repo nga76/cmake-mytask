@@ -15,9 +15,11 @@ void PrintDump(const StatData *data, size_t size, size_t count){
 }
 
 int StoreDump(const char *filename, const StatData *data, size_t size){
+    char msg[1024] = {'\0'};
     FILE *file = fopen(filename, "wb");
     if (file == NULL) {
-        perror("Error: can't open file");
+        sprintf(msg, "Error: can't open file %s", filename);
+        perror(msg);
         return errno;
     }
 

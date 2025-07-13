@@ -24,8 +24,6 @@ int main(int argc, char** argv) {
     // StoreDump
     
     // check params
-    // StoreDump("case_1_in_a", case_1_in_a_, sizeof(case_1_in_a_)/sizeof(StatData));
-    // StoreDump("case_1_in_b", case_1_in_b_, sizeof(case_1_in_b_)/sizeof(StatData));
     if (argc < 4) {
         const char* last_slash = strrchr(argv[0], '/');
         if (argc == 2 && ( strcasecmp(argv[1], "-h") == 0 || strcasecmp(argv[1], "--help") == 0)) {
@@ -45,14 +43,14 @@ int main(int argc, char** argv) {
         err = errno;
         goto free_res;
     }
-    PrintDump(case_1_in_a, size_case_1_in_a, 10);
+    
     case_1_in_b = LoadDump(argv[2], &size_case_1_in_b);
     if (case_1_in_b == NULL){
         perror("Can't load input data 2");
         err = errno;
         goto free_res;
     }
-    PrintDump(case_1_in_b, size_case_1_in_b, 10);
+    
 
     // join data
     case_1_out = JoinDump(case_1_in_a, size_case_1_in_a,
@@ -67,7 +65,7 @@ int main(int argc, char** argv) {
 
     // store rezult
     if (StoreDump(argv[3], case_1_out, size_case_1_out)){
-        perror("Can't save output data\n");
+        perror("Can't save output data");
         goto free_res;
     }
     
