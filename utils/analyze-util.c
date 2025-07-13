@@ -41,14 +41,14 @@ int main(int argc, char** argv) {
     // load data
     case_1_in_a = LoadDump(argv[1], &size_case_1_in_a);
     if (case_1_in_a == NULL){
-        perror("Can't load input data 1\n");
+        perror("Can't load input data 1");
         err = errno;
         goto free_res;
     }
     PrintDump(case_1_in_a, size_case_1_in_a, 10);
     case_1_in_b = LoadDump(argv[2], &size_case_1_in_b);
     if (case_1_in_b == NULL){
-        perror("Can't load input data 2\n");
+        perror("Can't load input data 2");
         err = errno;
         goto free_res;
     }
