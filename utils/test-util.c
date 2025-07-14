@@ -24,77 +24,6 @@ const StatData case_1_out[3] =
 {.id = 90889, .count = 13, .cost = 3.567, .primary = 0, .mode = 3 },
 {.id = 90089, .count = 14, .cost = 88.911, .primary = 0, .mode = 2 }};
 
-
-// Функция для запуска программы и получения вывода
-char* run_program(const char* command, const char** args, size_t* output_size) {
-    int pipefd[2];
-    pid_t child_pid;
-    char* output = NULL;
-    size_t buf_size = 0;
-    ssize_t bytes_read;
-    
-    //Create pipe get output
-    if (pipe(pipefd) == -1) {
-        perror("error: can't create pipe");
-        return NULL;
-    }
-    
-    // Создаем дочерний процесс
-    child_pid = fork();
-    if (child_pid == -1) {
-        perror("error: can't create process");
-        close(pipefd[0]);
-        close(pipefd[1]);
-        return NULL;
-    }
-    
-    if (child_pid == 0) {
-        // В дочернем процессе
-        close(pipefd[0]); // Закрываем чтение из pipe
-        
-        // Перенаправляем stdout в write end pipe
-        if (dup2(pipefd[1], STDOUT_FILENO) == -1) {
-            perror("Ошибка перенаправления stdout");
-            _exit(1);
-        }
-        close(pipefd[1]); // Закрываем оригинальный файловый дескриптор
-        
-        // Запускаем программу
-        execvp(command, (char* const*)args);
-        perror("Ошибка выполнения программы");
-        _exit(1);
-    } else {
-        // В родительском процессе
-        close(pipefd[1]); // Закрываем write end pipe
-        
-        // Читаем вывод из pipe
-        char buffer[4096];
-        while ((bytes_read = read(pipefd[0], buffer, sizeof(buffer) - 1)) > 0) {
-            buffer[bytes_read] = '\0';
-            
-            // Увеличиваем буфер
-            buf_size += bytes_read;
-            output = realloc(output, buf_size + 1);
-            if (output == NULL) {
-                perror("Ошибка выделения памяти");
-                close(pipefd[0]);
-                return NULL;
-            }
-            strcat(output, buffer);
-        }
-        close(pipefd[0]);
-        
-        // Ждем завершения дочернего процесса
-        wait(NULL);
-        
-        if (output_size)
-            *output_size = buf_size;
-        
-        return output;
-    }
-}
-
-// Пример использования
 int main(int argc, char** argv) {
     clock_t start = clock();
     int err = 0;
@@ -104,6 +33,8 @@ int main(int argc, char** argv) {
     char in1[2*BUF_SZ]={'\0'};
     char in2[2*BUF_SZ]={'\0'};
     char out[2*BUF_SZ]={'\0'};
+    size_t out_sz = 0;  
+    StatData *out_data = NULL;
     if (argc != 2) {
         perror("error: you need to send path to util as param");
         err = -1;
@@ -140,29 +71,18 @@ int main(int argc, char** argv) {
         err = -5;
         goto free_res;
     }
-    while (fgets(rbuf, sizeof(rbuf), fp) != NULL) {
-        printf("%s", rbuf);
-    }
+    // while (fgets(rbuf, sizeof(rbuf), fp) != NULL) {
+    //     printf("%s", rbuf);
+    // }
     pclose(fp);
     
-    // const char* args[] = {argv[1], in1, in2, out };
-    // size_t output_size;
-    // char* output = run_program(argv[1], args, &output_size);
-    
-    // if (NULL == output) {
-    //     perror("error: can't get program output");
-    //     err = -5;
-    //     goto free_res;
-    // }
-    
-    size_t out_sz = 0;  
-    StatData *out_data = LoadDump(out, &out_sz);
+    out_data = LoadDump(out, &out_sz);
     if (NULL == out_data){
         perror("error: can't read output file");
         err = -6;
         goto free_res;
     }
-    if (memcmp(case_1_out, out, out_sz*sizeof(StatData)) == 0){
+    if (memcmp(case_1_out, out_data, out_sz*sizeof(StatData)) == 0){
         clock_t end = clock();
         printf("Test passed : %f s\n", (float)(end - start) / CLOCKS_PER_SEC);
     }else{
