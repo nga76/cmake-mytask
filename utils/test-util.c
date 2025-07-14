@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
         perror("Can't save output data case_1_in_a");
     }
 
-    if (StoreDump("case_1_in_b", case_1_in_a, sizeof(case_1_in_b)/sizeof(StatData))){
+    if (StoreDump("case_1_in_b", case_1_in_b, sizeof(case_1_in_b)/sizeof(StatData))){
         perror("Can't save output data case_1_in_b");
     }
 
