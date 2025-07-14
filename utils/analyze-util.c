@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
         if (argc == 2 && ( strcasecmp(argv[1], "-h") == 0 || strcasecmp(argv[1], "--help") == 0)) {
             printf("Run:\n\t%s path_in1 path_in2 path_out\n", last_slash+1);
         }else{
-            perror("Wrong parameters\n");
+            perror("Wrong parameters");
             printf("Run:\n\t%s path_in1 path_in2 path_out\n", last_slash+1);
         }
         err = -1;

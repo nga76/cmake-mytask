@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include "analyze.h"
+
+#define BUF_SZ (1024)
 
 /* Содержимое для исходных файлов */
 const StatData case_1_in_a[2] =
@@ -30,16 +33,16 @@ char* run_program(const char* command, const char** args, size_t* output_size) {
     size_t buf_size = 0;
     ssize_t bytes_read;
     
-    // Создаем pipe для захвата вывода
+    //Create pipe get output
     if (pipe(pipefd) == -1) {
-        perror("Ошибка создания pipe");
+        perror("error: can't create pipe");
         return NULL;
     }
     
     // Создаем дочерний процесс
     child_pid = fork();
     if (child_pid == -1) {
-        perror("Ошибка создания процесса");
+        perror("error: can't create process");
         close(pipefd[0]);
         close(pipefd[1]);
         return NULL;
@@ -93,34 +96,86 @@ char* run_program(const char* command, const char** args, size_t* output_size) {
 
 // Пример использования
 int main(int argc, char** argv) {
-    if (argc == 2) {
-        printf("%s\n", argv[1]);
+    clock_t start = clock();
+    int err = 0;
+    FILE *fp;
+    char rbuf[BUF_SZ];
+    char cwd[BUF_SZ]={'\0'};
+    char in1[2*BUF_SZ]={'\0'};
+    char in2[2*BUF_SZ]={'\0'};
+    char out[2*BUF_SZ]={'\0'};
+    if (argc != 2) {
+        perror("error: you need to send path to util as param");
+        err = -1;
+        goto free_res;
     }
     
-    char *cwd = getcwd(NULL,0);
-    printf("%s\n", cwd);
+    if(getcwd(cwd,BUF_SZ) == NULL){
+        perror("error: can't identify the working directory");
+        err = -2;
+        goto free_res;
+    }
+    
+    sprintf(out, "%s/%s", cwd, "case_1_out");
 
+    sprintf(in1, "%s/%s", cwd, "case_1_in_a");
     if (StoreDump("case_1_in_a", case_1_in_a, sizeof(case_1_in_a)/sizeof(StatData))){
-        perror("Can't save output data case_1_in_a");
+        perror("error: can't save output data case_1_in_a");
+        err = -3;
+        goto free_res;
     }
 
+    sprintf(in2, "%s/%s", cwd, "case_1_in_b");
     if (StoreDump("case_1_in_b", case_1_in_b, sizeof(case_1_in_b)/sizeof(StatData))){
-        perror("Can't save output data case_1_in_b");
+        perror("error: can't save output data case_1_in_b");
+        err = -4;
+        goto free_res;
+    }
+    char cmd[8*BUF_SZ];
+    sprintf(cmd, "%s 2>&1 %s %s %s", argv[1], in1, in2, out);
+    fp = popen(cmd, "r");
+    if (fp == NULL) {
+        perror("error: Failed to run command");
+        printf("Failed to run command\n" );
+        err = -5;
+        goto free_res;
+    }
+    while (fgets(rbuf, sizeof(rbuf), fp) != NULL) {
+        printf("%s", rbuf);
+    }
+    pclose(fp);
+    
+    // const char* args[] = {argv[1], in1, in2, out };
+    // size_t output_size;
+    // char* output = run_program(argv[1], args, &output_size);
+    
+    // if (NULL == output) {
+    //     perror("error: can't get program output");
+    //     err = -5;
+    //     goto free_res;
+    // }
+    
+    size_t out_sz = 0;  
+    StatData *out_data = LoadDump(out, &out_sz);
+    if (NULL == out_data){
+        perror("error: can't read output file");
+        err = -6;
+        goto free_res;
+    }
+    if (memcmp(case_1_out, out, out_sz*sizeof(StatData)) == 0){
+        clock_t end = clock();
+        printf("Test passed : %f s\n", (float)(end - start) / CLOCKS_PER_SEC);
+    }else{
+        perror("Test filed");
+        err = -7;
     }
 
-    
 
-    const char* command = "/home/gne/CFT/cmake-mytask/build/analyze-util";
-    const char* args[] = {command, NULL};
-    size_t output_size;
-    char* output = run_program(command, args, &output_size);
-    
-    if (output) {
-        printf("Вывод программы:\n%s\n", output);
-        free(output);
-    } else {
-        printf("Не удалось получить вывод программы\n");
+    // free memory
+    free_res: {
+        // free(output);
+        free(out_data);
     }
-    
-    return 0;
+    if ( err ) return err; 
+    return EXIT_SUCCESS;
 }

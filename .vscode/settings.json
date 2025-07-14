@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "errno.h": "c",
-        "analyze.h": "c"
+        "analyze.h": "c",
+        "types.h": "c"
     }
 }
