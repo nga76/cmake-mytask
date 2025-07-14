@@ -17,7 +17,7 @@ target_link_libraries(test-util analyze)
 
 enable_testing()
 
-add_test(NAME "TestAnalyzeUtil" COMMAND test-util analyze-util)
+add_test(NAME "TestAnalyzeUtil" COMMAND test-util ./analyze-util)
 
 # install(TARGETS mylib myapp
 #     LIBRARY DESTINATION lib
