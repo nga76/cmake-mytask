@@ -1,0 +1,4 @@
+build :
+    cmake -B build
+test:
+    cd build && ctest
