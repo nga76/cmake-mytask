@@ -28,7 +28,6 @@ int main(int argc, char** argv) {
     clock_t start = clock();
     int err = 0;
     FILE *fp;
-    char rbuf[BUF_SZ];
     char cwd[BUF_SZ]={'\0'};
     char in1[2*BUF_SZ]={'\0'};
     char in2[2*BUF_SZ]={'\0'};
@@ -71,6 +70,7 @@ int main(int argc, char** argv) {
         err = -5;
         goto free_res;
     }
+    // char rbuf[BUF_SZ];
     // while (fgets(rbuf, sizeof(rbuf), fp) != NULL) {
     //     printf("%s", rbuf);
     // }
